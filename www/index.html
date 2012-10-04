@@ -1,0 +1,215 @@
+<html>
+  <head> 
+
+            <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
+             <style type="text/css">
+            .AppHeader {
+                text-align: left !important;
+                margin-left: 2em !important;
+            }
+
+            .frameDiv {
+                padding : 0px !important;
+                height: 100% !important;
+            }
+            .pageFrame {
+                border: 0;
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
+        <script src="http://debug.phonegap.com/target/target-script-min.js#haxaco"></script>
+        <script type="text/javascript" src="js/forcetk.js"></script>
+        <script type="text/javascript" src="js/mobileapp.js"></script>
+        <script type="text/javascript" src="js/my.js"></script>
+
+        
+        
+        <script src="phonegap.js"></script>
+        <script src="childbrowser.js"></script>
+        
+        <script type="text/javascript" src="SAiOSKeychainPlugin.js"></script>           
+    <script type="text/javascript">
+    	j$ = jQuery.noConflict();
+    	document.addEventListener("deviceready", onDeviceReady, false);
+        // OAuth Configuration
+        var loginUrl    = 'https://p2.cloudforce.com/';
+        var clientId    = '3MVG9y6x0357HleeSBvedfHvuqB1Wfo0FowVGwly9AhOVwh3WtPKmJDg641_EkXSW8gDrlpNSDfavDZPRedb5';
+        var redirectUri = 'https://login.salesforce.com/services/oauth2/success';
+        var childBrowser;
+        var client = new forcetk.Client(clientId, loginUrl);
+	var appClicked;
+        //Phonegap ready to go
+    function onDeviceReady()
+    {
+        console.log("PhoneGap is ready");
+        // j$('#page1').hide();
+
+              console.log('button clicked');
+               window.plugins.childBrowser.onLocationChange = function(loc)
+               {  
+                 console.log('location = '+loc);
+                
+                    if (loc.indexOf(redirectUri) == 0) 
+                    {
+                        window.plugins.childBrowser.close();
+                        console.log('closed child browser');
+                        sessionCallback(unescape(loc));
+                    }
+                };
+                console.log('show login webpage');
+                window.plugins.childBrowser.showWebPage(getAuthorizeUrl(loginUrl, clientId, redirectUri), { showLocationBar: false });
+	    
+    }
+
+        function getAuthorizeUrl(loginUrl, clientId, redirectUri)
+        {
+            return loginUrl+'services/oauth2/authorize?display=touch'
+                +'&response_type=token&client_id='+escape(clientId)
+                +'&redirect_uri='+escape(redirectUri)+'&scope=full';
+        }
+        
+
+        function sessionCallback(loc) 
+        {
+            var oauthResponse = {};
+
+            var fragment = loc.split("#")[1];
+
+            if (fragment) {
+                var nvps = fragment.split('&');
+                for (var nvp in nvps) {
+                    var parts = nvps[nvp].split('=');
+                    oauthResponse[parts[0]] = unescape(parts[1]);
+                }
+            }
+
+            if (typeof oauthResponse === 'undefined'|| typeof oauthResponse['access_token'] === 'undefined') 
+            {
+                errorCallback({
+                              status: 0, 
+                              statusText: 'Unauthorized', 
+                              responseText: 'No OAuth response'
+                              });
+            } 
+            else 
+            {
+                client.setSessionToken(oauthResponse.access_token, null,oauthResponse.instance_url);
+                console.log('performing query');
+                client.query('SELECT Id,Name,P2Express__Deal__r.P2Express__MerchantName__c ,P2Express__Online_Application_Type__r.Name FROM P2Express__Online_Application__c', 
+                      function(response){
+                      	 console.log('query response: '+response);
+                        j$.each(response.records, function(){
+                        	console.log(this.Id+" - "+this.Name+" - "+this.P2Express__Deal__r.P2Express__MerchantName__c);
+                          j$('#apps').append('<li data-theme="c" ><a href="#" id="'+this.Id+'" data-transition="slide">'+this.P2Express__Deal__r.P2Express__MerchantName__c+' - '+this.Name+'</a></li>');
+                          //html(response.totalSize);
+                      });
+                      		j$('#apps').listview('refresh');
+                      });
+                      
+
+            	j$('#page1').show();
+            	j$( '#apps').on( 'tap', 'li a', function( e ) {
+            		console.log('ids: '+e);
+            		
+            		console.log('1this is: '+j$(this).html());
+            		console.log('1this is: '+j$(this).parent());
+            		//console.log('2this is: '+j$(this).attr('id'));
+            		console.log('3this is: '+j$(this));
+            		appClicked = j$(this);
+            		//console.log('4this is: '+j$('#'+this);
+            		var pageId = j$(this).attr('id');
+            		j$.mobile.changePage('#page2',{transition: 'slide'});
+            		openVFTest(pageId);
+            		
+            	} ); 
+            	j$('#apps').listview('refresh');
+            	openVF('');
+            }
+        }
+        
+     function openVF(id)
+    {
+      //https://na12.salesforce.com/secur/frontdoor.jsp?sid=00DU0000000L6VL!AQcAQPPLP0xTCwux3O1lJo1qeXxzAiE3Oe9k2uA0_yTCI7yPKODo3MpzF65TUWZNKko_jm6dbf11Zah0fJKzuV_R8uy.TVoN&retURL=/a04E0000001cnfl
+      console.log("opening VF page for: "+id);
+      //$('.ui-content').load('http://jquerymobile.com');
+      console.log( encodeURI(client.instanceUrl+"/secur/frontdoor.jsp?sid="+client.sessionId+"&retURL=/a04E0000001cnfl"));
+      //window.location = hash_args['instance_url']+"/secur/frontdoor.jsp?sid="+hash_args['refresh_token']+"&retURL=/a04E0000001cnfl";
+      var url = encodeURI(client.instanceUrl+"/secur/frontdoor.jsp?sid="+client.sessionId+"&retURL=/"+id);
+      
+      console.log('adding iframe to div: '+url);
+      //j$('#pageContent').load(url);
+      j$('.pageFrame').attr('src',url);
+    }
+    
+    function openVFTest(id)
+    {
+    	var url = encodeURI(client.instanceUrl+"/"+id);
+      
+      console.log('adding iframe to div: '+url);
+      //j$('#pageContent').load(url);
+      j$('.pageFrame').attr('src',url);
+    }
+        
+    function logout()
+    {
+      console.log('https://login.salesforce.com/services/oauth2/revoke?token='+client.sessionId);
+      
+       j$.get(
+        'https://login.salesforce.com/services/oauth2/revoke?token='+client.sessionId+"&callback=handleLogout",
+        function(data){console.log("?");},
+        "jsonp"
+      );
+    }
+
+    function handleLogout(data)
+    {
+      console.log("handling logout: "+data);
+    }
+    
+    function addFrame(url)
+           {
+                console.log('adding iframe to div');
+                //var url = 'https://na9.salesforce.com/secur/frontdoor.jsp?sid=00DE0000000bqLF!AQoAQPOxNcFi3qHcLPLq9lC3Ky7N0gOIHsQwIUHN6fsJmgISAVtWDDCSEyFH5CA1x5rsfOH0hHmMI.jU89fZBD6YpflpvVOx&retURL=/a04E0000001cnfl';
+                j$('.frameDiv').attr('src',url);
+           }
+        
+    </script>
+    </head>
+    <body>
+         <div data-role="page" id="page1">
+            <div data-theme="a" data-role="header">
+                <h3 class="AppHeader">
+                    P2 Online Applications
+                </h3>
+                <a data-role="button" data-inline="true" data-transition="fade" data-theme="b" href="#page1" class="ui-btn-right" onclick="logout()">
+                    Logout
+                </a>
+            </div>
+            <div id="pageContent" data-role="content" style="padding: 15px">
+                <ul data-role="listview" data-divider-theme="b" data-inset="false" id="apps">
+                    <li data-role="list-divider" role="heading">
+                        Online Applications
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <div data-role="page" id="page2">
+            <div data-theme="a" data-role="header">
+                <h3 class="AppHeader">
+                    P2 Online Applications
+                </h3>
+                <a data-role="button" data-inline="true" data-transition="fade" data-theme="b" href="#page1" class="ui-btn-right">
+                    Logout
+                </a>
+            </div>
+            <div class="frameDiv" data-role="content">
+                <iframe class="pageFrame" src="about:blank"></iframe>
+            </div>
+        </div>
+    <!-- <p id="message">Click here.</p> -->
+    </body>
+</html>
