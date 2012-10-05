@@ -99,6 +99,12 @@
             else 
             {
                 client.setSessionToken(oauthResponse.access_token, null,oauthResponse.instance_url);
+                $('.pageFrame').load(function(){
+                    console.log('load 1');
+                    $(this).load(function(){
+                         console.log('load 2');
+                    })
+                });
                 
             	openVF('');
             }
@@ -106,15 +112,12 @@
         
      function openVF(id)
     {
-      //https://na12.salesforce.com/secur/frontdoor.jsp?sid=00DU0000000L6VL!AQcAQPPLP0xTCwux3O1lJo1qeXxzAiE3Oe9k2uA0_yTCI7yPKODo3MpzF65TUWZNKko_jm6dbf11Zah0fJKzuV_R8uy.TVoN&retURL=/a04E0000001cnfl
-      //console.log("opening VF page for: "+id);
-      //$('.ui-content').load('http://jquerymobile.com');
-      //window.location = hash_args['instance_url']+"/secur/frontdoor.jsp?sid="+hash_args['refresh_token']+"&retURL=/a04E0000001cnfl";
       var url = encodeURI(client.instanceUrl+"/secur/frontdoor.jsp?sid="+client.sessionId+"&retURL=/"+id);
       //j$('#pageContent').load(url);
       console.log('adding iframe to div: '+url);
       
-      window.location = url;
+      //window.location = url;
+       j$('.pageFrame').attr('src',url);
     }
         
     function logout()
@@ -139,7 +142,9 @@
     </head>
     <body>
          <div data-role="page" id="page1">
-            
+             <div class="frameDiv" data-role="content">
+                <iframe class="pageFrame" src="about:blank"></iframe>
+            </div>
         </div>
     <!-- <p id="message">Click here.</p> -->
     </body>
