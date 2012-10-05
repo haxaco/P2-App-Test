@@ -49,9 +49,7 @@
     {
         console.log("PhoneGap is ready");
         // j$('#page1').hide();
-        j$(document).bind('mobileinit', function(){
-            j$.mobile.metaViewportContent = 'width=device-width';
-        });
+        
               console.log('button clicked');
                window.plugins.childBrowser.onLocationChange = function(loc)
                {  
@@ -147,6 +145,12 @@
     </script>
     </head>
     <body>
+      <script type="text/javascript">
+        j$(document).bind('mobileinit', function(){
+            console.log('overriding metaViewportContent');
+            j$.mobile.metaViewportContent = 'width=device-width';
+        });
+      </script>
          <div data-role="page" id="page1">
              <div class="frameDiv" data-role="content">
                 <iframe class="spinnerBG pageFrame" src="about:blank"></iframe>
