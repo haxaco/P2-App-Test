@@ -70,7 +70,21 @@
                     }
                 };
                 console.log('show login webpage');
-                window.plugins.childBrowser.showWebPage(getAuthorizeUrl(loginUrl, clientId, redirectUri), { showLocationBar: false });
+                if(localStorage.refresh_token==null) 
+                {
+                  window.plugins.childBrowser.showWebPage(getAuthorizeUrl(loginUrl, clientId, redirectUri), { showLocationBar: false });
+                }
+                else
+                {
+                  console.log("already have a refresh token: "+localStorage.refresh_token);
+
+                   j$.get('https://login.salesforce.com/services/oauth2/token?grant_type=refresh_token&client_id=' + clientId +
+                                   '&refresh_token=' + localStorage.refresh_token+'&format=json',
+                          function(data){
+                            console.log(data);
+                          } );
+                }
+
       
     }
 
@@ -78,7 +92,7 @@
         {
             return loginUrl+'services/oauth2/authorize?display=touch'
                 +'&response_type=token&client_id='+escape(clientId)
-                +'&redirect_uri='+escape(redirectUri)+'&scope=full';
+                +'&redirect_uri='+escape(redirectUri)+'&scope=full refresh_token';
         }
         
 
@@ -140,7 +154,7 @@
         function(data){console.log("?");},
         "jsonp"
       );
-
+        localStorage.refresh_token = null;
        window.location.reload(true); 
     }
 
@@ -164,7 +178,7 @@
                     Logout
                 </a> 
             </div> 
-             <div><img style="display: block; margin-left: auto; margin-right: auto" src="/img/down.png" onclick="j$('.topBar').slideToggle('slow');"></div>
+             <div><img style="display: block; margin-left: auto; margin-right: auto" src="img/down.png" onclick="j$('.topBar').slideToggle('slow');"></div>
           </div>
              <div class="frameDiv" data-role="content">
                 <iframe class="spinnerBG pageFrame" src="about:blank"></iframe>
