@@ -1,7 +1,6 @@
 <html>
   <head> 
 
-
             <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
              <style type="text/css">
             .AppHeader {
@@ -36,21 +35,23 @@
         
         <script type="text/javascript" src="SAiOSKeychainPlugin.js"></script>           
     <script type="text/javascript">
-    	j$ = jQuery.noConflict();
-    	document.addEventListener("deviceready", onDeviceReady, false);
+      j$ = jQuery.noConflict();
+      document.addEventListener("deviceready", onDeviceReady, false);
         // OAuth Configuration
         var loginUrl    = 'https://p2.cloudforce.com/';
         var clientId    = '3MVG9y6x0357HleeSBvedfHvuqB1Wfo0FowVGwly9AhOVwh3WtPKmJDg641_EkXSW8gDrlpNSDfavDZPRedb5';
         var redirectUri = 'https://login.salesforce.com/services/oauth2/success';
         var childBrowser;
         var client = new forcetk.Client(clientId, loginUrl);
-	var appClicked;
+  var appClicked;
         //Phonegap ready to go
     function onDeviceReady()
     {
         console.log("PhoneGap is ready");
         // j$('#page1').hide();
-        
+        j$(document).bind('mobileinit', function(){
+            j$.mobile.metaViewportContent = 'width=device-width';
+        });
               console.log('button clicked');
                window.plugins.childBrowser.onLocationChange = function(loc)
                {  
@@ -65,11 +66,7 @@
                 };
                 console.log('show login webpage');
                 window.plugins.childBrowser.showWebPage(getAuthorizeUrl(loginUrl, clientId, redirectUri), { showLocationBar: false });
-
-                WebSettings settings = this.appView.getSettings();
-                settings.setSupportZoom(true);
-                settings.setBuiltInZoomControls(true);
-	    
+      
     }
 
         function getAuthorizeUrl(loginUrl, clientId, redirectUri)
@@ -115,7 +112,7 @@
                     })
                 });
                 
-            	openVF('');
+              openVF('');
             }
         }
         
@@ -148,11 +145,8 @@
 
         
     </script>
-
-
     </head>
     <body>
-      
          <div data-role="page" id="page1">
              <div class="frameDiv" data-role="content">
                 <iframe class="spinnerBG pageFrame" src="about:blank"></iframe>
