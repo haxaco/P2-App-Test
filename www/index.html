@@ -99,9 +99,9 @@
             else 
             {
                 client.setSessionToken(oauthResponse.access_token, null,oauthResponse.instance_url);
-                $('.pageFrame').load(function(){
+                j$('.pageFrame').load(function(){
                     console.log('load 1');
-                    $(this).load(function(){
+                    j$(this).load(function(){
                          console.log('load 2');
                     })
                 });
