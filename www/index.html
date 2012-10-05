@@ -154,14 +154,17 @@
     <body>
          <div data-role="page" id="page1">
             <div data-theme="a" data-role="header" class="topBanner">
+              <div class="topBar" style="display:none">
                 <h3 class="AppHeader">
                     P2 App
                 </h3>
                 <a data-role="button" data-inline="true" data-transition="fade" data-theme="b" href="#page1" class="ui-btn-right" >
                     Logout
                 </a> 
+              </div>
+                <div><img style="display: block; margin-left: auto; margin-right: auto" src="../img/down.png" onclick="j$('.topBar').slideToggle('slow');"></div>
             </div>
-            <div><img style="display: block; margin-left: auto; margin-right: auto" src="img/down.png" onclick="j$('.topBanner').slideToggle('slow');"></div>
+            
              <div class="frameDiv" data-role="content">
                 <iframe class="spinnerBG pageFrame" src="about:blank"></iframe>
             </div>
