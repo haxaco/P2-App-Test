@@ -105,10 +105,10 @@
                 j$('.pageFrame').load(function(){
                     console.log('load 1');
                     console.log(this);
-                    j$(this).addClass('spinnerBG');
+                    j$(this).removeClass('spinnerBG');
                     j$(this).load(function(){
                          console.log('load 2');
-                         j$(this).removeClass('spinnerBG');
+                         //j$(this).removeClass('spinnerBG');
                     })
                 });
                 
@@ -149,7 +149,7 @@
     <body>
          <div data-role="page" id="page1">
              <div class="frameDiv" data-role="content">
-                <iframe class="pageFrame" src="about:blank"></iframe>
+                <iframe class="spinnerBG pageFrame" src="about:blank"></iframe>
             </div>
         </div>
     <!-- <p id="message">Click here.</p> -->
