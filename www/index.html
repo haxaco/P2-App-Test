@@ -20,6 +20,11 @@
             .spinnerBG {
               background:#fff url('img/spinner.gif') no-repeat 50% 50% !important;
             }
+
+            .topBanner {
+              position: absolute;
+              width: 100%;
+            }
         </style>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
         <script type="text/javascript" src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
@@ -148,13 +153,13 @@
     </head>
     <body>
          <div data-role="page" id="page1">
-            <div data-theme="a" data-role="header">
+            <div data-theme="a" data-role="header" class="topBanner">
                 <h3 class="AppHeader">
                     P2 App
                 </h3>
-                <a data-role="button" data-inline="true" data-transition="fade" data-theme="b" href="#page1" class="ui-btn-right">
+                <a data-role="button" data-inline="true" data-transition="fade" data-theme="b" href="#page1" class="ui-btn-right" onclick="j$('.topBanner').hide('slow');">
                     Logout
-                </a>
+                </a> 
             </div>
              <div class="frameDiv" data-role="content">
                 <iframe class="spinnerBG pageFrame" src="about:blank"></iframe>
