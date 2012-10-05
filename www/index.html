@@ -1,5 +1,6 @@
 <html>
   <head> 
+    <meta name="viewport"  content="width=device-width, height=device-height, initial-scale=0.8, user-scalable=1" />
 
             <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
              <style type="text/css">
@@ -64,6 +65,10 @@
                 };
                 console.log('show login webpage');
                 window.plugins.childBrowser.showWebPage(getAuthorizeUrl(loginUrl, clientId, redirectUri), { showLocationBar: false });
+
+                WebSettings settings = this.appView.getSettings();
+                settings.setSupportZoom(true);
+                settings.setBuiltInZoomControls(true);
 	    
     }
 
